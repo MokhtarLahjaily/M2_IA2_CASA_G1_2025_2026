@@ -12,12 +12,29 @@ class Vehicle {
     this.maxForce = 0.1;
     // rayon du véhicule
     this.r = 16;
-    
+
+    // Pour comportement fuite
+    this.rayonPerception = 100;
+    this.oldMaxSpeed = this.maxSpeed;
+    this.vitesseDeFuite = 10;
   }
 
   applyBehaviors(target) {
-    let force = this.seek(target);
-    //let force = this.flee(target);
+    //let force = this.seek(target);
+    let force;
+    
+    // Je ne veux fuir que si la cible est dans mon rayon de perception
+    // on calcule la distance entre le véhicule et la cible
+    let d = p5.Vector.dist(this.pos, target);
+    if (d < this.rayonPerception) {
+      // on fuit la cible
+      this.oldMaxSpeed = this.maxSpeed;
+      this.maxSpeed = this.vitesseDeFuite;
+      force = this.flee(target);
+    } else {
+      // on reprend la vitesse normale
+      this.maxSpeed = this.oldMaxSpeed;
+    }
     this.applyForce(force);
   }
 
@@ -108,6 +125,11 @@ class Vehicle {
     circle(0, 0, this.perceptionRadius*2);
     // restauration du contexte graphique, le 0, 0 redevient le coin en haut à gauche
     // de l'écran, les couleurs et épaisseurs de traits redeviennent celles d'avant
+
+    // Je dessine le rayon de perception
+    stroke("white");
+    noFill();
+    circle(0, 0, this.rayonPerception * 2);
     pop();
 
     // dessin sous la forme d'une flèche du vecteur vitesse

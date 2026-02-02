@@ -30,7 +30,7 @@ function setup() {
   // Les parametres sont : valeur min, valeur max, 
   // valeur initiale, pas
   // On crée le slider et on le positionne
-  vitesseMaxSlider = createSlider(1, 20, 10, 1);
+  vitesseMaxSlider = createSlider(1, 20, 4, 1);
   vitesseMaxSlider.position(920, 10);
   vitesseMaxSlider.size(150);
 
@@ -72,6 +72,8 @@ function setup() {
 function creerVehicules(nb) {
   for (let i = 0; i < nb; i++) {
     let v = new Vehicle(random(width), random(height));
+    // vitesse initiale aléatoire
+    v.vel = p5.Vector.random2D();
     vehicles.push(v);
   }
 }
