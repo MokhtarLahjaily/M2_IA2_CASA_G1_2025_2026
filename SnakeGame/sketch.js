@@ -73,7 +73,7 @@ let particles = [];
 
 let score = 0;
 let highScore = 0;
-let gameState = "menu"; // "menu" | "playing" | "gameover"
+let gameState = "menu"; // "menu" | "playing" | "paused" | "gameover"
 let isWatching = false; // true = Watch AI (same game, auto-piloted player)
 let target;
 let isNewRecord = false;
@@ -218,6 +218,12 @@ function draw() {
     }
     updateGame();
     drawHUD();
+  } else if (gameState === "paused") {
+    cursor(ARROW);
+    drawGrid();
+    drawScene();
+    drawHUD();
+    drawPaused();
   } else if (gameState === "gameover") {
     cursor(ARROW);
     drawGrid();
@@ -550,10 +556,67 @@ function drawHUD() {
   // Controls hint
   fill(255, 255, 255, 100); textSize(12); textAlign(LEFT, BOTTOM);
   if (isWatching) {
-    text("[M] Menu  •  [D] Debug  •  [ENTER] Take Control", 10, height - 15);
+    text("[M] Menu  •  [D] Debug  •  [P] Pause  •  [ENTER] Take Control", 10, height - 15);
   } else {
-    text("[CLICK] Dash  •  [D] Debug  •  [M] Menu  •  [R] Restart", 10, height - 15);
+    text("[CLICK] Dash  •  [D] Debug  •  [P] Pause  •  [M] Menu  •  [R] Restart", 10, height - 15);
   }
+  pop();
+}
+
+// ─── PAUSE OVERLAY ─────────────────────────────────────────
+function drawPaused() {
+  push();
+  // Dark overlay
+  fill(0, 0, 0, 150);
+  rect(0, 0, width, height);
+
+  textAlign(CENTER, CENTER); textFont("monospace");
+
+  // Title
+  let glow = sin(frameCount * 0.05) * 30 + 225;
+  fill(glow, glow, 255); textSize(52); textStyle(BOLD);
+  text("⏸  PAUSED", width / 2, height / 2 - 80);
+
+  // Stats
+  fill(220); textSize(20); textStyle(NORMAL);
+  text(`Score: ${score}   •   Length: ${snake.length}   •   Best: ${highScore}`, width / 2, height / 2 - 20);
+  let aliveRivals = rivals.filter(r => r.alive).length;
+  fill(180); textSize(16);
+  text(`Rivals: ${aliveRivals}   •   Prey: ${preys.length}   •   Boids: ${enemies.length}`, width / 2, height / 2 + 15);
+
+  // Buttons
+  let bw = 220, bh = 50;
+
+  // Resume
+  let resumeY = height / 2 + 80;
+  let resumeH = mouseX > width / 2 - bw / 2 && mouseX < width / 2 + bw / 2 &&
+                mouseY > resumeY - bh / 2 && mouseY < resumeY + bh / 2;
+  fill(resumeH ? color(0, 220, 120, 220) : color(0, 180, 100, 180));
+  stroke(0, 255, 136, resumeH ? 100 : 40); strokeWeight(2);
+  rect(width / 2 - bw / 2, resumeY - bh / 2, bw, bh, 10);
+  noStroke(); fill(255); textSize(22); textStyle(BOLD);
+  text("▶  RESUME [P]", width / 2, resumeY);
+
+  // Restart
+  let restartY = height / 2 + 145;
+  let restartH = mouseX > width / 2 - bw / 2 && mouseX < width / 2 + bw / 2 &&
+                 mouseY > restartY - bh / 2 && mouseY < restartY + bh / 2;
+  fill(restartH ? color(220, 180, 50, 220) : color(180, 140, 30, 180));
+  stroke(255, 200, 50, restartH ? 100 : 40); strokeWeight(2);
+  rect(width / 2 - bw / 2, restartY - bh / 2, bw, bh, 10);
+  noStroke(); fill(255); textSize(22); textStyle(BOLD);
+  text("🔄  RESTART [R]", width / 2, restartY);
+
+  // Menu
+  let menuY = height / 2 + 210;
+  let menuH = mouseX > width / 2 - bw / 2 && mouseX < width / 2 + bw / 2 &&
+              mouseY > menuY - bh / 2 && mouseY < menuY + bh / 2;
+  fill(menuH ? color(120, 120, 140, 220) : color(80, 80, 100, 180));
+  stroke(150, 150, 170, menuH ? 100 : 40); strokeWeight(2);
+  rect(width / 2 - bw / 2, menuY - bh / 2, bw, bh, 10);
+  noStroke(); fill(255); textSize(22); textStyle(BOLD);
+  text("◀  MENU [M]", width / 2, menuY);
+
   pop();
 }
 
@@ -1126,6 +1189,23 @@ function mousePressed() {
         mouseY > height * 0.77 - btnH / 2 && mouseY < height * 0.77 + btnH / 2) {
       initGame(true); return;
     }
+  } else if (gameState === "paused") {
+    let bw = 220, bh = 50;
+    // Resume button
+    if (mouseX > width / 2 - bw / 2 && mouseX < width / 2 + bw / 2 &&
+        mouseY > height / 2 + 80 - bh / 2 && mouseY < height / 2 + 80 + bh / 2) {
+      gameState = "playing"; return;
+    }
+    // Restart button
+    if (mouseX > width / 2 - bw / 2 && mouseX < width / 2 + bw / 2 &&
+        mouseY > height / 2 + 145 - bh / 2 && mouseY < height / 2 + 145 + bh / 2) {
+      initGame(false); return;
+    }
+    // Menu button
+    if (mouseX > width / 2 - bw / 2 && mouseX < width / 2 + bw / 2 &&
+        mouseY > height / 2 + 210 - bh / 2 && mouseY < height / 2 + 210 + bh / 2) {
+      gameState = "menu"; return;
+    }
   } else if (gameState === "playing" && !isWatching && snake && snake.alive) {
     snake.startDash();
     playSound(sndDash);
@@ -1168,8 +1248,13 @@ function keyPressed() {
       return false;
     }
     if (key.length === 1 && playerName.length < 15) { playerName += key; return false; }
+  } else if (gameState === "paused") {
+    if (key === "p" || key === "P" || keyCode === ESCAPE) gameState = "playing";
+    else if (key === "r" || key === "R") initGame(false);
+    else if (key === "m" || key === "M") gameState = "menu";
   } else if (gameState === "playing") {
-    if (key === "r" || key === "R") initGame(false);
+    if (key === "p" || key === "P" || keyCode === ESCAPE) gameState = "paused";
+    else if (key === "r" || key === "R") initGame(false);
     else if (key === "m" || key === "M") gameState = "menu";
     else if (keyCode === ENTER && isWatching) {
       // Take control from AI
