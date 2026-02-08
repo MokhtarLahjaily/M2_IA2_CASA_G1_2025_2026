@@ -199,7 +199,7 @@ class Vehicle {
       if (d > 0 && d < desiredSeparation) {
         let diff = p5.Vector.sub(this.pos, other.pos);
         diff.normalize();
-        diff.div(d);
+        diff.div(max(d, 0.001));
         steer.add(diff);
         count++;
       }

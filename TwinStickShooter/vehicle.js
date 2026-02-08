@@ -205,7 +205,7 @@ class Vehicle {
       if (d > 0 && d < desiredSeparation) {
         let diff = p5.Vector.sub(this.pos, other.pos);
         diff.normalize();
-        diff.div(d); // Plus le voisin est proche → plus la force est grande
+        diff.div(max(d * d, 0.001)); // Force quadratique inverse pour éviter les chevauchements
         steer.add(diff);
         count++;
       }

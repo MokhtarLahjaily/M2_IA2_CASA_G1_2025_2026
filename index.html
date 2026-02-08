@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master AI - IA Réactive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0e14;
+            --card-bg: #161b22;
+            --accent-green: #00ff88;
+            --accent-blue: #00d4ff;
+            --text-main: #e6edf3;
+            --text-dim: #8b949e;
+            --border: #30363d;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        header {
+            padding: 4rem 2rem 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-weight: 800;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2.5rem;
+            padding: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 380px;
+            padding: 2.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--hover-color);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--hover-glow);
+        }
+
+        .game-card.snake { --hover-color: var(--accent-green); --hover-glow: rgba(0, 255, 136, 0.2); }
+        .game-card.shooter { --hover-color: var(--accent-blue); --hover-glow: rgba(0, 212, 255, 0.2); }
+
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
+        }
+
+        h2 {
+            margin: 0 0 1rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        p {
+            color: var(--text-dim);
+            text-align: center;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            background: transparent;
+            border: 1px solid var(--hover-color);
+            color: var(--hover-color);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .game-card:hover .btn {
+            background: var(--hover-color);
+            color: #000;
+        }
+
+        footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        .tech-tag {
+            display: inline-block;
+            background: #1f242c;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            margin: 0 0.3rem;
+            border: 1px solid var(--border);
+        }
+
+        /* Abstract shapes background */
+        .bg-shapes {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-shapes">
+        <!-- SVG décoratif discret peut être ajouté ici -->
+    </div>
+
+    <header>
+        <h1>Projet Master IA Réactive</h1>
+        <div class="subtitle">Étude des comportements de pilotage autonomes (Steering Behaviors)</div>
+    </header>
+
+    <main>
+        <a href="./SnakeGame/index.html" class="game-card snake">
+            <div class="icon">🐍</div>
+            <h2>Snake Game</h2>
+            <p>Implémentation du <b>Leader Following</b>. Une tête directive suivie de segments autonomes utilisant le comportement <i>Arrive</i> et l'évitement d'obstacles dynamique.</p>
+            <div class="btn">Lancer l'expérience</div>
+        </a>
+
+        <a href="./TwinStickShooter/index.html" class="game-card shooter">
+            <div class="icon">🚀</div>
+            <h2>Twin Stick Shooter</h2>
+            <p>Simulation de <b>Foules & Flocking</b>. Des ennemis variés utilisant <i>Pursuit</i>, <i>Separation</i> quadratique et des tactiques de contournement (Strafing).</p>
+            <div class="btn">Lancer le combat</div>
+        </a>
+    </main>
+
+    <footer>
+        <p>
+            Projet réalisé par <b>Mohamed Mokhtar Lahjaily & Aya fetheddine</b> &bull; 
+            Technologies : <span class="tech-tag">p5.js</span> <span class="tech-tag">Vector Math</span> <span class="tech-tag">Craig Reynolds Theory</span>
+        </p>
+    </footer>
+</body>
+</html>

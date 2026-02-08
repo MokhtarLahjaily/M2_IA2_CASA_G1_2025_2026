@@ -203,9 +203,9 @@ class Snake {
       if (!r.alive) continue;
       for (let seg of r.segments) {
         let d = p5.Vector.dist(this.head.pos, seg.pos);
-        if (d < this.segSize * 5 && d > 0) {
+        if (d < this.segSize * 5 && d >= 0) {
           let push = p5.Vector.sub(this.head.pos, seg.pos);
-          push.normalize().div(d / (this.segSize * 5));
+          push.normalize().div(max(d, 0.001) / (this.segSize * 5));
           bodyAvoid.add(push);
         }
       }

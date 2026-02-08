@@ -74,9 +74,9 @@ class EnemyBoid extends Vehicle {
     let total = 0;
     for (let other of boids) {
       let d = p5.Vector.dist(this.pos, other.pos);
-      if (other !== this && d < this.perceptionRadius) {
+      if (other !== this && d > 0 && d < this.perceptionRadius) {
         let diff = p5.Vector.sub(this.pos, other.pos);
-        diff.div(d * d);
+        diff.div(max(d * d, 0.001));
         steering.add(diff);
         total++;
       }
